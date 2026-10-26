@@ -23,6 +23,7 @@ import { installLogRedaction } from './lib/log-redaction.js';
 import { cleanupExpiredCooldowns } from './services/ratelimit.js';
 import { loadCacheFromDb } from './services/cache.js';
 import { installGracefulShutdown } from './lib/graceful-shutdown.js';
+import { startKeepAlive } from './services/keepalive.js';
 
 // Before any other statement runs, so no provider key can reach stdout — users
 // paste server output into bug reports. Module scope, not inside main(), so it
@@ -90,6 +91,7 @@ async function main() {
     startBackupScheduler(scheduler);
     startCustomModelSync(getDb(), scheduler);
     startBuiltinModelDiscovery(getDb(), scheduler);
+    startKeepAlive();
 
     // Post-sleep recovery: while the host was suspended (laptop lid, VM
     // pause) timers and keep-alive sockets froze, so the first requests after
